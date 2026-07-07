@@ -1,4 +1,5 @@
 import socket
+import argparse
 
 def scan_port(host, port):
     try:
@@ -11,6 +12,16 @@ def scan_port(host, port):
     except Exception as e:
         print(f"Error: {e}")
 
+# This part reads what you type in the terminal
+parser = argparse.ArgumentParser()
+parser.add_argument("--start", type=int, default=1)
+parser.add_argument("--end", type=int, default=100)
+args = parser.parse_args()
+
 host = "scanme.nmap.org"
-for port in range(20, 25):
+print(f"Scanning ports {args.start} to {args.end}...")
+
+for port in range(args.start, args.end + 1):
     scan_port(host, port)
+
+print("Done!")
