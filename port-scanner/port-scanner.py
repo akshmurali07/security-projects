@@ -1,5 +1,8 @@
 import socket
-import argparse
+import threading
+
+open_ports = []
+lock = threading.Lock()
 
 def scan_port(host, port):
     try:
@@ -7,21 +10,23 @@ def scan_port(host, port):
         sock.settimeout(1)
         result = sock.connect_ex((host, port))
         if result == 0:
-            print(f"Port {port}: OPEN")
+            with lock:
+                open_ports.append(port)
+                print(f"Port {port}: OPEN")
         sock.close()
-    except Exception as e:
-        print(f"Error: {e}")
-
-# This part reads what you type in the terminal
-parser = argparse.ArgumentParser()
-parser.add_argument("--start", type=int, default=1)
-parser.add_argument("--end", type=int, default=100)
-args = parser.parse_args()
+    except:
+        pass
 
 host = "scanme.nmap.org"
-print(f"Scanning ports {args.start} to {args.end}...")
+threads = []
+print(f"Scanning {host}...")
 
-for port in range(args.start, args.end + 1):
-    scan_port(host, port)
+for port in range(1, 1025):
+    t = threading.Thread(target=scan_port, args=(host, port))
+    threads.append(t)
+    t.start()
 
-print("Done!")
+for t in threads:
+    t.join()
+
+print(f"\nOpen ports: {sorted(open_ports)}")
