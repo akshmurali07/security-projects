@@ -1,20 +1,18 @@
 import re
+import argparse
 
-# List of 10 most common passwords
 common_passwords = [
-    "password", "123456", "123456789", "qwerty", 
-    "abc123", "password1", "iloveyou", "admin", 
+    "password", "123456", "123456789", "qwerty",
+    "abc123", "password1", "iloveyou", "admin",
     "letmein", "welcome"
 ]
 
 def check_password_strength(password):
-    
-    # Check if password is in common list first
     if password.lower() in common_passwords:
         print("❌ This is one of the most common passwords ever!")
         print("Please choose a completely different password.")
         return
-    
+
     score = 0
     feedback = []
 
@@ -48,5 +46,9 @@ def check_password_strength(password):
     if feedback:
         print("Suggestions:", ", ".join(feedback))
 
-password = input("Enter password to check: ")
-check_password_strength(password)
+# argparse part — reads password from terminal
+parser = argparse.ArgumentParser()
+parser.add_argument("--password", type=str, required=True)
+args = parser.parse_args()
+
+check_password_strength(args.password)
